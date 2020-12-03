@@ -15,7 +15,7 @@ const requests = {
 }
 
 
-const Activities = {
+export const Activities = {
 
     list :(): Promise<IActivity[]> => requests.get('/activities'),
     details : (id:string) => requests.get(`/activities/${id}`),
@@ -25,6 +25,3 @@ const Activities = {
 
 }
 
-export default {
-    Activities
-}
