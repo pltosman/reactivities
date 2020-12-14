@@ -13,7 +13,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <Fragment>
       <Route exact path='/' component={HomePage} />
-      <Route path={'/(.+)'} render={() => (
+      <Route path={`/(.+)`} render={() => (
         <Fragment>
           <NavBar />
           <Container style={{ marginTop: '7em' }}>
