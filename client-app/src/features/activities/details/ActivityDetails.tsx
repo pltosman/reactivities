@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom';
 import { Grid } from 'semantic-ui-react'
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
+import NotFound from '../../../app/layout/NotFound';
 import ActivityStore from '../../../app/stores/activityStore'
 import { ActivityDetailedChat } from './ActivityDetailedChat';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
@@ -16,16 +17,17 @@ interface DetailParams {
 }
 
 
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
     const activityStore = useContext(ActivityStore);
     const { activity, loadActivity, loadingInitial } = activityStore;
 
     useEffect(() => {
         loadActivity(match.params.id);
-    }, [loadActivity, match.params.id])
+    }, [loadActivity, match.params.id, history])
 
 
-    if (loadingInitial || !activity) return <LoadingComponent content='Loading Activity...' />
+    if (loadingInitial) return <LoadingComponent content='Loading Activity...' />
+    if (!activity) return <h1>Not Found</h1>
 
     return (
 
