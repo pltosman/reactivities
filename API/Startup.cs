@@ -10,6 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Persistence;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace API
 {
@@ -36,6 +38,12 @@ namespace API
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
                 });
             });
+            var builder = services.AddIdentityCore<AppUser>();
+            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddEntityFrameworkStores<DataContext>();
+            identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+
+            services.AddAuthentication();
             services.AddMediatR(typeof(List.Handler).Assembly);
             services.AddControllers().AddFluentValidation(cfg =>
             {
