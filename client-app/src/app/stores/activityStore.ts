@@ -1,25 +1,31 @@
-import { action, computed, observable, configure, runInAction } from "mobx";
-import { createContext, SyntheticEvent } from "react";
+import { action, computed, observable, runInAction } from "mobx";
+import { SyntheticEvent } from "react";
 import { IActivity } from "../models/activity";
 import { makeObservable } from 'mobx';
-import Activities from "../api/agent";
+import agent from '../api/agent';
 import { history } from "../..";
 import { toast, ToastContainer } from "react-toastify";
+import { RootStore } from "./rootStore";
 
 
+export default class ActivityStore {
 
-configure({ enforceActions: 'always' });
+  rootStore: RootStore;
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    makeObservable(this);
+  }
 
-class ActivityStore {
+
   @observable activityRegistry = new Map();
   @observable activity: IActivity | null = null;
   @observable loadingInitial = false;
   @observable submitting = false;
   @observable target = '';
 
-  constructor() {
-    makeObservable(this);
-  }
+  // constructor() {
+  //   makeObservable(this);
+  // }
 
 
   @computed get activitiesByDate() {
@@ -45,7 +51,7 @@ class ActivityStore {
 
 
     try {
-      const activities = await Activities.list();
+      const activities = await agent.Activities.list();
       runInAction(() => {
         activities.forEach(activity => {
           activity.date = new Date(activity.date);
@@ -73,7 +79,7 @@ class ActivityStore {
     else {
       this.loadingInitial = true;
       try {
-        activity = await Activities.details(id);
+        activity = await agent.Activities.details(id);
         runInAction(() => {
           activity.date = new Date(activity.date);
           this.activity = activity;
@@ -105,7 +111,7 @@ class ActivityStore {
     this.submitting = true;
 
     try {
-      await Activities.create(activity);
+      await agent.Activities.create(activity);
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
         this.submitting = false;
@@ -124,7 +130,7 @@ class ActivityStore {
   @action editActivity = async (activity: IActivity) => {
     this.submitting = true;
     try {
-      await Activities.update(activity);
+      await agent.Activities.update(activity);
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
         this.activity = activity;
@@ -148,7 +154,7 @@ class ActivityStore {
     this.submitting = true;
     this.target = event.currentTarget.name;
     try {
-      await Activities.delete(id);
+      await agent.Activities.delete(id);
 
 
 
@@ -168,4 +174,3 @@ class ActivityStore {
   }
 }
 
-export default createContext(new ActivityStore())
