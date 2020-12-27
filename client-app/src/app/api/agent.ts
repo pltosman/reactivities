@@ -9,7 +9,11 @@ axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.request.use((config) => {
     const token = window.localStorage.getItem('jwt');
-    if (token) config.headers.Authorization = `Bearer ${token}`
+    console.log(token)
+    if (token && token !== 'null') {
+        console.log(token)
+        config.headers.Authorization = `Bearer ${token}`
+    }
     return config
 }, error => {
     return Promise.reject(error);
@@ -51,7 +55,7 @@ const requests = {
 
 const Activities = {
 
-    list: (): Promise<IActivity[]> => requests.get('/activities'),
+    list: (): Promise<IActivity[]> => requests.get('http://localhost:5000/api/activities'),
     details: (id: string) => requests.get(`/activities/${id}`),
     create: (activity: IActivity) => requests.post('/activities', activity),
     update: (activity: IActivity) => requests.put(`/activities/${activity.id}`, activity),
